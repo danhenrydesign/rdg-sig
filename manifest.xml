@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Replace every https://YOURHOST with the base URL where you host this folder. -->
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+           xsi:type="MailApp">
+  <Id>9b25d518-00a6-40bd-af93-12e868a4e7af</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Reveal Design Group</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="RDG Signatures"/>
+  <Description DefaultValue="Adds the company email signature for the selected From address."/>
+  <IconUrl DefaultValue="https://YOURHOST/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://YOURHOST/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://www.revealdesigngroup.com"/>
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <FormSettings>
+    <Form xsi:type="ItemEdit">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://YOURHOST/src/settings.html"/>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  <Permissions>ReadWriteItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Edit"/>
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+      <Requirements>
+        <bt:Sets DefaultMinVersion="1.13">
+          <bt:Set Name="Mailbox"/>
+        </bt:Sets>
+      </Requirements>
+      <Hosts>
+        <Host xsi:type="MailHost">
+          <Runtimes>
+            <!-- HTML runtime for new Outlook / web; classic Outlook on Windows uses the JS override. -->
+            <Runtime resid="WebViewRuntime.Url">
+              <Override type="javascript" resid="JSRuntime.Url"/>
+            </Runtime>
+          </Runtimes>
+          <DesktopFormFactor>
+            <FunctionFile resid="WebViewRuntime.Url"/>
+            <ExtensionPoint xsi:type="MessageComposeCommandSurface">
+              <OfficeTab id="TabDefault">
+                <Group id="rdgSigGroup">
+                  <Label resid="GroupLabel"/>
+                  <Control xsi:type="Button" id="rdgSigSettingsButton">
+                    <Label resid="SettingsButton.Label"/>
+                    <Supertip>
+                      <Title resid="SettingsButton.Label"/>
+                      <Description resid="SettingsButton.Tooltip"/>
+                    </Supertip>
+                    <Icon>
+                      <bt:Image size="16" resid="Icon.16"/>
+                      <bt:Image size="32" resid="Icon.32"/>
+                      <bt:Image size="80" resid="Icon.80"/>
+                    </Icon>
+                    <Action xsi:type="ShowTaskpane">
+                      <SourceLocation resid="Settings.Url"/>
+                    </Action>
+                  </Control>
+                </Group>
+              </OfficeTab>
+            </ExtensionPoint>
+            <ExtensionPoint xsi:type="LaunchEvent">
+              <LaunchEvents>
+                <!-- Fires for new mail, replies and forwards. -->
+                <LaunchEvent Type="OnNewMessageCompose" FunctionName="onNewMessageComposeHandler"/>
+                <LaunchEvent Type="OnMessageFromChanged" FunctionName="onMessageFromChangedHandler"/>
+              </LaunchEvents>
+              <SourceLocation resid="WebViewRuntime.Url"/>
+            </ExtensionPoint>
+          </DesktopFormFactor>
+        </Host>
+      </Hosts>
+      <Resources>
+        <bt:Images>
+          <bt:Image id="Icon.16" DefaultValue="https://YOURHOST/assets/icon-16.png"/>
+          <bt:Image id="Icon.32" DefaultValue="https://YOURHOST/assets/icon-32.png"/>
+          <bt:Image id="Icon.80" DefaultValue="https://YOURHOST/assets/icon-80.png"/>
+        </bt:Images>
+        <bt:Urls>
+          <bt:Url id="WebViewRuntime.Url" DefaultValue="https://YOURHOST/src/commands.html"/>
+          <bt:Url id="JSRuntime.Url" DefaultValue="https://YOURHOST/src/commands.js"/>
+          <bt:Url id="Settings.Url" DefaultValue="https://YOURHOST/src/settings.html"/>
+        </bt:Urls>
+        <bt:ShortStrings>
+          <bt:String id="GroupLabel" DefaultValue="Signature"/>
+          <bt:String id="SettingsButton.Label" DefaultValue="Signature settings"/>
+        </bt:ShortStrings>
+        <bt:LongStrings>
+          <bt:String id="SettingsButton.Tooltip" DefaultValue="Set the title and phone numbers used in your email signature."/>
+        </bt:LongStrings>
+      </Resources>
+    </VersionOverrides>
+  </VersionOverrides>
+</OfficeApp>

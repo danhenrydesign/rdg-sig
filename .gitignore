@@ -1,0 +1,5 @@
+# Real staff signatures (names, phone extensions) — never publish
+example-signatures/
+
+.DS_Store
+node_modules/

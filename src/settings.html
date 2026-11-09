@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signature settings</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <script src="commands.js"></script>
+  <style>
+    body { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 16px; color: #222; }
+    label { display: block; margin-top: 12px; font-weight: 600; }
+    input { width: 100%; box-sizing: border-box; padding: 6px; margin-top: 4px; font: inherit; }
+    button { margin-top: 16px; padding: 8px 16px; font: inherit; }
+    #status { margin-top: 12px; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+  <p class="muted">Your name comes from your account: <span id="who"></span></p>
+  <form id="form">
+    <label for="pronouns">Pronouns (optional)</label>
+    <input id="pronouns" placeholder="she/her">
+    <label for="title">Title</label>
+    <input id="title" autocomplete="organization-title" placeholder="Partner">
+    <label for="extension">Phone extension</label>
+    <input id="extension" inputmode="numeric" placeholder="1234">
+    <button type="submit">Save</button>
+  </form>
+  <p id="status" role="status"></p>
+
+  <script>
+    Office.onReady(function () {
+      var settings = Office.context.roamingSettings;
+      var profile = settings.get("profile") || {};
+      var fields = ["pronouns", "title", "extension"];
+      document.getElementById("who").textContent = Office.context.mailbox.userProfile.displayName;
+      fields.forEach(function (f) { document.getElementById(f).value = profile[f] || ""; });
+
+      document.getElementById("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        var status = document.getElementById("status");
+        fields.forEach(function (f) { profile[f] = document.getElementById(f).value.trim(); });
+        settings.set("profile", profile);
+        settings.saveAsync(function (r) {
+          if (r.status !== Office.AsyncResultStatus.Succeeded) {
+            status.textContent = "Could not save: " + r.error.message;
+            return;
+          }
+          // Refresh the signature on the message that is open now.
+          applySignature({ completed: function () { status.textContent = "Saved. Signature updated."; } });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
